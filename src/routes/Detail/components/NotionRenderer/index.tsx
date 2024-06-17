@@ -1,7 +1,14 @@
 import dynamic from "next/dynamic"
 import Image from "next/image"
 import Link from "next/link"
-import { ExtendedRecordMap } from "notion-types"
+import {
+  CodeBlock,
+  CollectionViewBlock,
+  CollectionViewPageBlock,
+  ExtendedRecordMap,
+  PageBlock,
+  EquationBlock,
+} from "notion-types"
 import useScheme from "src/hooks/useScheme"
 
 // core styles shared by all of react-notion-x (required)
@@ -15,25 +22,84 @@ import "prismjs/themes/prism-tomorrow.css"
 import "katex/dist/katex.min.css"
 import { FC } from "react"
 import styled from "@emotion/styled"
-
-const _NotionRenderer = dynamic(
+import {
+  MapImageUrlFn,
+  MapPageUrlFn,
+  NotionComponents,
+  NotionContext,
+  SearchNotionFn,
+} from "react-notion-x"
+type NotionRenderer = {
+  recordMap: ExtendedRecordMap
+  components?: Partial<NotionComponents>
+  mapPageUrl?: MapPageUrlFn
+  mapImageUrl?: MapImageUrlFn
+  searchNotion?: SearchNotionFn
+  isShowingSearch?: boolean
+  onHideSearch?: () => void
+  rootPageId?: string
+  rootDomain?: string
+  fullPage?: boolean
+  darkMode?: boolean
+  previewImages?: boolean
+  forceCustomImages?: boolean
+  showCollectionViewDropdown?: boolean
+  linkTableTitleProperties?: boolean
+  isLinkCollectionToUrlProperty?: boolean
+  isImageZoomable?: boolean
+  showTableOfContents?: boolean
+  minTableOfContentsItems?: number
+  defaultPageIcon?: string
+  defaultPageCover?: string
+  defaultPageCoverPosition?: number
+  className?: string
+  bodyClassName?: string
+  header?: React.ReactNode
+  footer?: React.ReactNode
+  pageHeader?: React.ReactNode
+  pageFooter?: React.ReactNode
+  pageTitle?: React.ReactNode
+  pageAside?: React.ReactNode
+  pageCover?: React.ReactNode
+  blockId?: string
+  hideBlockId?: boolean
+  disableHeader?: boolean
+}
+const _NotionRenderer = dynamic<NotionRenderer>(
   () => import("react-notion-x").then((m) => m.NotionRenderer),
   { ssr: false }
 )
-
-const Code = dynamic(() =>
-  import("react-notion-x/build/third-party/code").then(async (m) =>  m.Code )
+type Code = {
+  block: CodeBlock
+  defaultLanguage?: string
+  className?: string
+}
+const Code = dynamic<Code>(() =>
+  import("react-notion-x/build/third-party/code").then(async (m) => m.Code)
 )
-
-const Collection = dynamic(() =>
+type Collection = {
+  block: CollectionViewBlock | CollectionViewPageBlock | PageBlock
+  className?: string
+  ctx: NotionContext
+}
+const Collection = dynamic<Collection>(() =>
   import("react-notion-x/build/third-party/collection").then(
     (m) => m.Collection
   )
 )
-const Equation = dynamic(() =>
+type Equation = {
+  block: EquationBlock
+  math?: string
+  inline?: boolean
+  className?: string
+}
+const Equation = dynamic<Equation>(() =>
   import("react-notion-x/build/third-party/equation").then((m) => m.Equation)
 )
-const Pdf = dynamic(
+type Pdf = {
+  file: string
+}
+const Pdf = dynamic<Pdf>(
   () => import("react-notion-x/build/third-party/pdf").then((m) => m.Pdf),
   {
     ssr: false,
